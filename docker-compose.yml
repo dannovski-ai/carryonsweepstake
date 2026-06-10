@@ -1,0 +1,11 @@
+services:
+  carryonsweepstake:
+    build: .
+    container_name: carryonsweepstake
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3002}:3000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PORT=3000
