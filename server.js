@@ -133,8 +133,10 @@ async function refreshData() {
 }
 
 // ─────────────────────────────────────────────
-//  API endpoint
+//  API endpoints
 // ─────────────────────────────────────────────
+app.get('/ping', (req, res) => res.json({ ok: true, version: '2.0.0', ts: Date.now() }));
+
 app.get('/api/eliminated', async (req, res) => {
   const stale = Date.now() - cache.ts > CACHE_TTL;
 

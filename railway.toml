@@ -1,5 +1,3 @@
-[build]
-dockerfilePath = "Dockerfile"
-
 [deploy]
+startCommand = "node server.js"
 restartPolicyType = "on_failure"
