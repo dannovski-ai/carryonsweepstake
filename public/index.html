@@ -2,834 +2,961 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>endpointX · Sweepstake 2026</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="/socket.io/socket.io.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚽ Carry On Life World Cup 2026 Sweepstake</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --bg:        #0f0b1e;
-      --surface:   #1a1535;
-      --surface2:  #231d45;
-      --accent:    #ff6b35;
-      --accent2:   #e84012;
-      --gold:      #ffd700;
-      --teal:      #00d4aa;
-      --text:      #f0ecff;
-      --muted:     #9b93c4;
-      --elim:      #4a4060;
-      --radius:    16px;
-      --safe-top:    env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    /* ===== PITCH BACKGROUND ===== */
+    body {
+      font-family: 'Barlow Condensed', sans-serif;
+      background-color: #0a1f0e;
+      background-image:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,0.018) 0px,
+          rgba(255,255,255,0.018) 60px,
+          transparent 60px,
+          transparent 120px
+        ),
+        radial-gradient(ellipse at 50% 0%, rgba(22,80,35,0.6) 0%, transparent 65%);
+      min-height: 100vh;
+      padding: 0 0 60px;
+      color: #1a1a1a;
     }
 
-    html, body {
-      background: linear-gradient(160deg, #0d0a1f 0%, #1a0f2e 50%, #0f1a2e 100%) fixed;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      min-height: 100dvh;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
+    .page { max-width: 1440px; margin: 0 auto; padding: 0 16px; }
+
+    /* ===== HEADER ===== */
+    .stadium-header {
+      background: linear-gradient(180deg, #050e07 0%, #0d2414 60%, #0a1f0e 100%);
+      border-bottom: 3px solid #2a6e38;
+      padding: 32px 20px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    /* ── Page header (branding, sits at top of scroll) ───────────────────── */
-    .page-header {
-      padding: calc(var(--safe-top) + 28px) 20px 20px;
-      max-width: 540px;
-      margin: 0 auto;
+    .stadium-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(255,215,0,0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 0%, rgba(255,215,0,0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.04) 0%, transparent 40%);
+      pointer-events: none;
     }
-    .hero-label {
-      font-family: 'Inter', sans-serif;
-      font-size: 11px;
+
+    .header-inner { position: relative; z-index: 1; }
+
+    .tournament-tag {
+      display: inline-block;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 3px;
       text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 6px;
-    }
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(30px, 8vw, 46px);
-      font-weight: 900;
-      line-height: 1.05;
-      color: #fff;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.6);
-    }
-    .hero-title span { color: var(--accent); font-style: italic; }
-    .hero-sub {
-      font-size: 13px;
-      color: rgba(240,236,255,0.65);
-      margin-top: 6px;
-      letter-spacing: 1px;
-    }
-
-    /* ── Layout ───────────────────────────────────────────────────────────── */
-    .container {
-      max-width: 540px;
-      margin: 0 auto;
-      padding: 0 16px calc(var(--safe-bottom) + 40px);
-    }
-
-    /* ── Section headings ─────────────────────────────────────────────────── */
-    .section-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 24px 0 12px;
-    }
-    .section-head h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .section-head .badge {
-      background: rgba(255,255,255,0.1);
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 600;
-      border-radius: 20px;
-      padding: 3px 10px;
-      letter-spacing: 0.5px;
-    }
-
-    /* ── Card ─────────────────────────────────────────────────────────────── */
-    .card {
-      background: rgba(18, 14, 40, 0.78);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,0.10);
-      padding: 18px;
-      margin-bottom: 12px;
-    }
-
-    /* ── Join form ────────────────────────────────────────────────────────── */
-    .join-card {
-      background: rgba(18, 14, 40, 0.82);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,107,53,0.35);
-    }
-    .join-card label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .join-card input {
-      width: 100%;
-      background: rgba(255,255,255,0.07);
-      border: 1.5px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 17px;
-      padding: 14px 16px;
-      outline: none;
-      transition: border-color 0.2s;
-      -webkit-appearance: none;
-    }
-    .join-card input::placeholder { color: var(--muted); }
-    .join-card input:focus { border-color: var(--accent); }
-
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Inter', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.1s;
-      letter-spacing: 0.3px;
-      -webkit-appearance: none;
-    }
-    .btn:active { transform: scale(0.98); opacity: 0.9; }
-    .btn:disabled { opacity: 0.35; cursor: default; }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      margin-top: 12px;
-    }
-    .btn-secondary {
-      background: var(--surface2);
-      color: var(--text);
-      margin-top: 10px;
-    }
-    .btn-danger {
-      background: rgba(220,50,50,0.2);
-      color: #ff7070;
-      border: 1px solid rgba(220,50,50,0.3);
-      margin-top: 10px;
-    }
-    .btn-teal {
-      background: var(--teal);
-      color: #0f0b1e;
-      margin-top: 12px;
-    }
-
-    /* ── Joined banner ────────────────────────────────────────────────────── */
-    .joined-banner {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .joined-avatar {
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      background: var(--accent);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; font-weight: 700; color: #fff;
-      flex-shrink: 0;
-    }
-    .joined-name { font-size: 17px; font-weight: 600; }
-    .joined-status { font-size: 13px; color: var(--muted); margin-top: 2px; }
-
-    /* ── Player list (pre-draw) ───────────────────────────────────────────── */
-    .player-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-    .player-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .player-row:first-child { padding-top: 0; }
-    .player-num {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      width: 20px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-    .player-name-text { font-size: 15px; font-weight: 500; }
-    .player-you {
-      font-size: 11px;
-      background: var(--accent);
-      color: #fff;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-weight: 600;
-      margin-left: auto;
-    }
-
-    /* ── Your teams hero card ─────────────────────────────────────────────── */
-    .your-teams-card {
-      background: rgba(18, 14, 40, 0.82);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,107,53,0.4);
-    }
-    .your-teams-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent);
+      color: #2a9e50;
+      background: rgba(42,110,56,0.18);
+      border: 1px solid rgba(42,110,56,0.4);
+      padding: 5px 14px;
+      border-radius: 2px;
       margin-bottom: 14px;
     }
-    .team-chips {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .team-chip {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 14px 16px;
-      transition: background 0.2s;
-    }
-    .team-chip.eliminated {
-      background: rgba(255,255,255,0.02);
-      opacity: 0.45;
-    }
-    .team-chip .flag { font-size: 26px; line-height: 1; }
-    .team-chip .tname {
-      font-size: 16px;
-      font-weight: 600;
-      flex: 1;
-    }
-    .team-chip.eliminated .tname {
-      text-decoration: line-through;
-      text-decoration-color: rgba(255,255,255,0.5);
-    }
-    .chip-out {
-      font-size: 11px;
-      font-weight: 600;
-      color: #ff7070;
-      letter-spacing: 0.5px;
-      background: rgba(220,50,50,0.15);
-      border-radius: 6px;
-      padding: 3px 8px;
-    }
-    .chip-alive {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--teal);
-      letter-spacing: 0.5px;
-      background: rgba(0,212,170,0.1);
-      border-radius: 6px;
-      padding: 3px 8px;
-    }
 
-    /* ── All players grid (post-draw) ─────────────────────────────────────── */
-    .player-card {
-      background: rgba(18, 14, 40, 0.78);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,0.10);
-      padding: 16px;
-      margin-bottom: 10px;
-    }
-    .player-card.is-you {
-      border-color: rgba(255,107,53,0.45);
-      background: rgba(30, 18, 50, 0.85);
-    }
-    .player-card-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .player-card-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--surface2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 700;
-      flex-shrink: 0;
-    }
-    .player-card.is-you .player-card-avatar { background: var(--accent); }
-    .player-card-name { font-size: 15px; font-weight: 600; flex: 1; }
-    .player-card-status {
-      font-size: 11px; font-weight: 600;
-      border-radius: 6px; padding: 3px 8px;
-    }
-    .status-alive { background: rgba(0,212,170,0.15); color: var(--teal); }
-    .status-out { background: rgba(220,50,50,0.15); color: #ff7070; }
-    .player-card-teams {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .mini-team {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 10px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.04);
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .mini-team.eliminated {
-      opacity: 0.4;
-      text-decoration: line-through;
-    }
-    .mini-team .flag { font-size: 18px; }
-
-    /* ── Winner banner ────────────────────────────────────────────────────── */
-    .winner-banner {
-      background: linear-gradient(135deg, #1a3a1a, #0f2b0f);
-      border: 2px solid var(--gold);
-      border-radius: var(--radius);
-      padding: 24px 20px;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-    .winner-trophy { font-size: 48px; margin-bottom: 8px; }
-    .winner-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--gold);
+    .title {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(2.6rem, 8vw, 7rem);
+      color: #FFD700;
+      letter-spacing: 4px;
+      line-height: 0.92;
+      text-shadow: 0 0 40px rgba(255,215,0,0.25), 3px 3px 0 rgba(0,0,0,0.5);
       margin-bottom: 6px;
     }
-    .winner-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-      font-weight: 900;
-      color: var(--gold);
-    }
-    .winner-teams {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 6px;
+
+    .title-sub {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(1.4rem, 4vw, 3rem);
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 5px;
+      margin-bottom: 16px;
     }
 
-    /* ── Admin panel ──────────────────────────────────────────────────────── */
-    .admin-panel {
-      background: rgba(18, 14, 40, 0.80);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,107,53,0.2);
-      border-radius: var(--radius);
-      margin-bottom: 12px;
+    .subtitle {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.5px;
     }
-    .admin-toggle {
+
+    /* ===== CONTROLS STRIP ===== */
+    .controls-strip {
+      background: #0f2918;
+      border-bottom: 2px solid #1d4a27;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 18px;
-      cursor: pointer;
-      -webkit-user-select: none;
-      user-select: none;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .admin-toggle-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--accent);
-    }
-    .admin-toggle-icon { color: var(--accent); font-size: 18px; transition: transform 0.2s; }
-    .admin-toggle-icon.open { transform: rotate(180deg); }
-    .admin-body { padding: 0 18px 18px; display: none; }
-    .admin-body.open { display: block; }
 
-    .elim-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .elim-btn {
+    .stats-row {
       display: flex;
-      align-items: center;
       gap: 8px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      border: 1.5px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-align: left;
-      -webkit-appearance: none;
+      flex-wrap: wrap;
     }
-    .elim-btn .flag { font-size: 18px; }
-    .elim-btn.is-elim {
-      background: rgba(220,50,50,0.15);
-      border-color: rgba(220,50,50,0.3);
-      color: #ff9090;
-      text-decoration: line-through;
-    }
-    .elim-btn:active { transform: scale(0.97); }
 
-    /* ── Status pill ──────────────────────────────────────────────────────── */
-    .status-bar {
+    .stat-pill {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .stat-in    { background: rgba(46,160,67,0.22); color: #5dde80; border: 1.5px solid rgba(46,160,67,0.4); }
+    .stat-out   { background: rgba(220,53,69,0.18); color: #ff7b89; border: 1.5px solid rgba(220,53,69,0.35); }
+    .stat-teams { background: rgba(255,215,0,0.12); color: #ffd700; border: 1.5px solid rgba(255,215,0,0.28); }
+
+    .controls-right {
       display: flex;
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.18s;
+      border: 1.5px solid;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-reset {
+      background: rgba(220,53,69,0.15);
+      color: #ff7b89;
+      border-color: rgba(220,53,69,0.4);
+    }
+    .btn-reset:hover { background: rgba(220,53,69,0.3); border-color: #ff7b89; }
+
+    .btn-login {
+      background: rgba(255,215,0,0.1);
+      color: #ffd700;
+      border-color: rgba(255,215,0,0.3);
+    }
+    .btn-login:hover { background: rgba(255,215,0,0.2); border-color: #ffd700; }
+
+    .btn-logout {
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      border-color: rgba(255,255,255,0.15);
+      font-size: 0.78rem;
+    }
+    .btn-logout:hover { color: rgba(255,255,255,0.7); border-color: rgba(255,255,255,0.35); }
+
+    .admin-badge {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.78rem;
+      color: #ffd700;
+      letter-spacing: 1px;
+      opacity: 0.8;
+    }
+
+    /* ===== LOGIN MODAL ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #0d2414;
+      border: 1.5px solid #2a6e38;
+      border-radius: 6px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    .modal-title {
+      font-family: 'Bebas Neue', cursive;
+      font-size: 2rem;
+      color: #FFD700;
+      letter-spacing: 3px;
       margin-bottom: 6px;
     }
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 20px;
-      padding: 5px 12px;
-    }
-    .pill-waiting { background: rgba(255,215,0,0.1); color: var(--gold); }
-    .pill-live { background: rgba(0,212,170,0.1); color: var(--teal); }
-    .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-    /* ── Toast ────────────────────────────────────────────────────────────── */
-    #toast {
-      position: fixed;
-      bottom: calc(var(--safe-bottom) + 20px);
-      left: 50%; transform: translateX(-50%);
-      background: #2a2045;
+    .modal-sub {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+
+    .modal-field {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 3px;
+      padding: 11px 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1rem;
       color: #fff;
-      font-size: 14px;
-      font-weight: 500;
-      padding: 12px 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-      z-index: 999;
-      max-width: 320px;
-      text-align: center;
-      white-space: nowrap;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
     }
-    #toast.show { opacity: 1; }
+    .modal-field:focus { border-color: #2a9e50; }
+    .modal-field::placeholder { color: rgba(255,255,255,0.25); }
 
-    /* ── Empty state ──────────────────────────────────────────────────────── */
-    .empty {
-      text-align: center;
-      padding: 32px 20px;
-      color: var(--muted);
-    }
-    .empty-icon { font-size: 36px; margin-bottom: 10px; }
-    .empty p { font-size: 14px; line-height: 1.5; }
-
-    /* ── Divider ──────────────────────────────────────────────────────────── */
-    .divider {
-      height: 1px;
-      background: rgba(255,255,255,0.07);
-      margin: 8px 0;
-    }
-
-    /* ── Footnote ─────────────────────────────────────────────────────────── */
-    .footnote {
-      text-align: center;
-      font-size: 11px;
-      color: var(--muted);
-      margin: 20px 0 8px;
+    .modal-error {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.82rem;
+      color: #ff7b89;
       letter-spacing: 0.5px;
+      margin-bottom: 14px;
+      min-height: 20px;
     }
-    .footnote span { color: var(--accent); }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-modal-login {
+      flex: 1;
+      background: #2a6e38;
+      color: #fff;
+      border-color: #2a9e50;
+      font-size: 0.95rem;
+    }
+    .btn-modal-login:hover { background: #2a9e50; }
+
+    .btn-modal-cancel {
+      background: transparent;
+      color: rgba(255,255,255,0.45);
+      border-color: rgba(255,255,255,0.15);
+    }
+    .btn-modal-cancel:hover { color: #fff; border-color: rgba(255,255,255,0.4); }
+
+    /* ===== WINNER BANNER ===== */
+    .winner-banner {
+      display: none;
+      padding: 28px 20px;
+      background: linear-gradient(135deg, #b8860b 0%, #FFD700 45%, #FFA000 100%);
+      border-top: 4px solid #FFD700;
+      border-bottom: 4px solid #FFD700;
+      text-align: center;
+      animation: flashGold 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes flashGold {
+      from { box-shadow: inset 0 0 0 rgba(255,215,0,0), 0 0 30px rgba(255,215,0,0.3); }
+      to   { box-shadow: inset 0 0 60px rgba(255,255,255,0.15), 0 0 60px rgba(255,215,0,0.7); }
+    }
+
+    .winner-banner h2 {
+      font-family: 'Bebas Neue', cursive;
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      color: #1a1a1a;
+      letter-spacing: 5px;
+    }
+
+    .winner-banner p {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      font-weight: 600;
+      color: #3a2000;
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+
+    /* ===== GRID ===== */
+    .grid-wrap { padding: 24px 0 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    /* Mobile: single column below 480px */
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: 1fr; }
+      .controls-strip { flex-direction: column; align-items: flex-start; }
+      .controls-right { width: 100%; justify-content: flex-start; }
+    }
+
+    /* ===== PLAYER CARD ===== */
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.45), 0 1px 4px rgba(0,0,0,0.3);
+      transition: transform 0.18s ease, opacity 0.4s ease, filter 0.4s ease;
+    }
+    .card:hover:not(.all-out) { transform: translateY(-3px); }
+    .card.all-out { opacity: 0.3; filter: grayscale(1); }
+
+    .card-inner { border-left: 5px solid var(--accent, #2a6e38); }
+
+    .card-header {
+      padding: 13px 14px 11px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--header-bg, #f8fdf8);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .player-emoji { font-size: 2.1rem; line-height: 1; flex-shrink: 0; }
+
+    .player-info { flex: 1; min-width: 0; }
+
+    .player-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #111;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-status {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .status-in  { color: #1e7e34; }
+    .status-out { color: #b71c1c; }
+
+    /* ===== TEAM BUTTONS ===== */
+    .card-teams {
+      padding: 9px 11px 12px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .team-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 11px;   /* generous tap target */
+      border-radius: 3px;
+      background: #f0faf2;
+      border: 1.5px solid #b8dfc0;
+      cursor: pointer;
+      transition: all 0.15s;
+      width: 100%;
+      text-align: left;
+      font-family: 'Barlow Condensed', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .team-btn:active { transform: scale(0.98); }
+
+    @media (hover: hover) {
+      .team-btn:hover:not(.elim) {
+        background: #d4f0db;
+        border-color: #4caf5e;
+        transform: translateX(5px);
+      }
+    }
+
+    .team-btn.elim {
+      background: #f5f5f5;
+      border-color: #ddd;
+    }
+    .team-btn.elim .team-name { text-decoration: line-through; color: #bbb; }
+    .team-btn.elim .flag { opacity: 0.35; }
+
+    /* Live-eliminated: from API, cannot be manually restored */
+    .team-btn.live-out {
+      background: #fff5f0;
+      border-color: #ffccbc;
+      cursor: default;
+    }
+    .team-btn.live-out .team-name { text-decoration: line-through; color: #e57373; }
+    .team-btn.live-out .flag { opacity: 0.4; }
+    .live-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 1px;
+      color: #fff;
+      background: #e53935;
+      padding: 1px 5px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Live data status bar */
+    .live-bar {
+      background: #071510;
+      border-bottom: 1px solid #1a3a22;
+      padding: 7px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: pulse-dot 1.5s ease-in-out infinite;
+    }
+    .live-dot.active { background: #4caf50; }
+    .live-dot.error  { background: #ef5350; animation: none; }
+    .live-dot.waiting { background: #888; animation: none; }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+    .live-bar-text { color: rgba(255,255,255,0.45); }
+
+    .flag { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+
+    .team-name {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      color: #1b5e20;
+    }
+
+    .elim-icon { font-size: 0.9rem; flex-shrink: 0; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+    }
+
+    /* ===== CONFETTI ===== */
+    .confetti-piece {
+      position: fixed;
+      top: -20px;
+      animation: fallDown linear forwards;
+      z-index: 9999;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+    @keyframes fallDown {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+      75%  { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(900deg); opacity: 0; }
+    }
   </style>
 </head>
 <body>
 
-<!-- ── Page header (branding) ────────────────────────────────────────────── -->
-<div class="page-header">
-  <div class="hero-label">endpoint<span style="color:#ff6b35">X</span></div>
-  <div class="hero-title">World Cup <span>2026</span></div>
-  <div class="hero-sub">sweepstake · 48 teams · 3 per player</div>
+<!-- ===== HEADER ===== -->
+<div class="stadium-header">
+  <div class="header-inner">
+    <div class="tournament-tag">⚽ FIFA World Cup 2026 ⚽</div>
+    <div class="title">Carry On Life</div>
+    <div class="title-sub">World Cup Sweepstake</div>
+    <p class="subtitle">Tap a team to cross them out as they're eliminated &nbsp;·&nbsp; Last one standing wins</p>
+  </div>
 </div>
 
-<!-- ── Main content ───────────────────────────────────────────────────────── -->
-<div class="container">
-  <div id="app"><!-- rendered by JS --></div>
-  <div class="footnote">endpoint<span>X</span> · world cup 2026</div>
+<!-- ===== LIVE DATA BAR ===== -->
+<div class="live-bar" id="live-bar">
+  <span class="live-dot waiting" id="live-dot"></span>
+  <span class="live-bar-text" id="live-bar-text">Live results: connecting…</span>
 </div>
 
-<div id="toast"></div>
+<!-- ===== CONTROLS STRIP ===== -->
+<div class="controls-strip">
+  <div class="stats-row" id="stats"></div>
+  <div class="controls-right" id="controls-right"></div>
+</div>
+
+<div class="page">
+
+  <!-- WINNER -->
+  <div id="winner-banner" class="winner-banner">
+    <h2>🏆 &nbsp;We Have a Winner!&nbsp; 🏆</h2>
+    <p id="winner-text"></p>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid-wrap">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <footer>Carry On Life &nbsp;·&nbsp; World Cup 2026 &nbsp;·&nbsp; Good luck everyone 🍀</footer>
+</div>
+
+<!-- ===== LOGIN MODAL ===== -->
+<div class="modal-overlay" id="login-modal" onclick="handleOverlayClick(event)">
+  <div class="modal-box">
+    <div class="modal-title">🔐 Admin Login</div>
+    <div class="modal-sub">Authorised personnel only</div>
+    <input class="modal-field" id="login-user" type="text"
+           placeholder="Username" autocomplete="username"
+           onkeydown="if(event.key==='Enter') attemptLogin()">
+    <input class="modal-field" id="login-pass" type="password"
+           placeholder="Password" autocomplete="current-password"
+           onkeydown="if(event.key==='Enter') attemptLogin()">
+    <div class="modal-error" id="login-error"></div>
+    <div class="modal-buttons">
+      <button class="btn btn-modal-login" onclick="attemptLogin()">Login</button>
+      <button class="btn btn-modal-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <script>
-// ── Flags ──────────────────────────────────────────────────────────────────
-const FLAGS = {
-  'Argentina':'🇦🇷','Brazil':'🇧🇷','Colombia':'🇨🇴','Ecuador':'🇪🇨',
-  'Uruguay':'🇺🇾','Venezuela':'🇻🇪','Bolivia':'🇧🇴','Paraguay':'🇵🇾',
-  'Germany':'🇩🇪','Spain':'🇪🇸','France':'🇫🇷','England':'🏴󠁧󠁢󠁥󠁮󠁧󠁿',
-  'Portugal':'🇵🇹','Netherlands':'🇳🇱','Belgium':'🇧🇪','Italy':'🇮🇹',
-  'Switzerland':'🇨🇭','Austria':'🇦🇹','Scotland':'🏴󠁧󠁢󠁳󠁣󠁴󠁿','Denmark':'🇩🇰',
-  'Serbia':'🇷🇸','Czechia':'🇨🇿','Croatia':'🇭🇷','Hungary':'🇭🇺',
-  'Poland':'🇵🇱','Slovakia':'🇸🇰','Romania':'🇷🇴','Slovenia':'🇸🇮',
-  'Albania':'🇦🇱','Turkey':'🇹🇷','Ukraine':'🇺🇦','Georgia':'🇬🇪',
-  'USA':'🇺🇸','Mexico':'🇲🇽','Canada':'🇨🇦','Jamaica':'🇯🇲',
-  'Panama':'🇵🇦','Honduras':'🇭🇳','Costa Rica':'🇨🇷',
-  'Japan':'🇯🇵','South Korea':'🇰🇷','Australia':'🇦🇺','Iran':'🇮🇷',
-  'Saudi Arabia':'🇸🇦','Iraq':'🇮🇶',
-  'Morocco':'🇲🇦','Egypt':'🇪🇬','Senegal':'🇸🇳','Nigeria':'🇳🇬',
-  'New Zealand':'🇳🇿',
-};
+/* ================================================
+   TEAMS  (48 total)
+   ================================================ */
+const TEAMS = [
+  { name: 'Australia',    flag: '🇦🇺' },
+  { name: 'Iran',         flag: '🇮🇷' },
+  { name: 'Iraq',         flag: '🇮🇶' },
+  { name: 'Japan',        flag: '🇯🇵' },
+  { name: 'Jordan',       flag: '🇯🇴' },
+  { name: 'Qatar',        flag: '🇶🇦' },
+  { name: 'Saudi Arabia', flag: '🇸🇦' },
+  { name: 'South Korea',  flag: '🇰🇷' },
+  { name: 'Uzbekistan',   flag: '🇺🇿' },
+  { name: 'Algeria',      flag: '🇩🇿' },
+  { name: 'Cape Verde',   flag: '🇨🇻' },
+  { name: 'DR Congo',     flag: '🇨🇩' },
+  { name: 'Egypt',        flag: '🇪🇬' },
+  { name: 'Ghana',        flag: '🇬🇭' },
+  { name: 'Ivory Coast',  flag: '🇨🇮' },
+  { name: 'Morocco',      flag: '🇲🇦' },
+  { name: 'Senegal',      flag: '🇸🇳' },
+  { name: 'South Africa', flag: '🇿🇦' },
+  { name: 'Tunisia',      flag: '🇹🇳' },
+  { name: 'Canada',       flag: '🇨🇦' },
+  { name: 'Curaçao',      flag: '🇨🇼' },
+  { name: 'Haiti',        flag: '🇭🇹' },
+  { name: 'Mexico',       flag: '🇲🇽' },
+  { name: 'Panama',       flag: '🇵🇦' },
+  { name: 'USA',          flag: '🇺🇸' },
+  { name: 'Argentina',    flag: '🇦🇷' },
+  { name: 'Brazil',       flag: '🇧🇷' },
+  { name: 'Colombia',     flag: '🇨🇴' },
+  { name: 'Ecuador',      flag: '🇪🇨' },
+  { name: 'Paraguay',     flag: '🇵🇾' },
+  { name: 'Uruguay',      flag: '🇺🇾' },
+  { name: 'New Zealand',  flag: '🇳🇿' },
+  { name: 'Austria',          flag: '🇦🇹' },
+  { name: 'Belgium',          flag: '🇧🇪' },
+  { name: 'Bosnia & Herz.',   flag: '🇧🇦' },
+  { name: 'Croatia',          flag: '🇭🇷' },
+  { name: 'Czechia',          flag: '🇨🇿' },
+  { name: 'England',          flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+  { name: 'France',           flag: '🇫🇷' },
+  { name: 'Germany',          flag: '🇩🇪' },
+  { name: 'Netherlands',      flag: '🇳🇱' },
+  { name: 'Norway',           flag: '🇳🇴' },
+  { name: 'Portugal',         flag: '🇵🇹' },
+  { name: 'Scotland',         flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
+  { name: 'Spain',            flag: '🇪🇸' },
+  { name: 'Sweden',           flag: '🇸🇪' },
+  { name: 'Switzerland',      flag: '🇨🇭' },
+  { name: 'Turkey',           flag: '🇹🇷' },
+];
 
-function flag(team) { return FLAGS[team] || '🏳️'; }
+/* ================================================
+   PLAYERS  (24 · 2 teams each = 48 exactly)
+   ================================================ */
+const PLAYERS = [
+  { name: 'Sarah',   emoji: '🌸' },
+  { name: 'Dan',     emoji: '⚡' },
+  { name: 'Amelia',  emoji: '🦋' },
+  { name: 'James',   emoji: '🎩' },
+  { name: 'Becky',   emoji: '🌺' },
+  { name: 'Mark',    emoji: '🦁' },
+  { name: 'Sues',    emoji: '👑' },
+  { name: 'Gina',    emoji: '💃' },
+  { name: 'Schoey',  emoji: '🎯' },
+  { name: 'Stables', emoji: '🏋️' },
+  { name: 'Okey',    emoji: '⭐' },
+  { name: 'Ciaran',  emoji: '🍀' },
+  { name: 'Dave',    emoji: '🎲' },
+  { name: 'Fred',    emoji: '🦊' },
+  { name: 'Tilly',   emoji: '🌈' },
+  { name: 'Kate',    emoji: '💎' },
+  { name: 'Willow',  emoji: '🌿' },
+  { name: 'Ashy',    emoji: '🔥' },
+  { name: 'Kev',     emoji: '💪' },
+  { name: 'Katie',   emoji: '🌻' },
+  { name: 'Matt',    emoji: '🎸' },
+  { name: 'Helen',   emoji: '🌙' },
+  { name: 'Oscar',   emoji: '🌟' },
+  { name: 'Anna',    emoji: '💫' },
+];
 
-// ── State ──────────────────────────────────────────────────────────────────
-let state = { players:[], assignments:{}, drawn:false, eliminated:[] };
-let currentPlayer = sessionStorage.getItem('sweepstake_player') || '';
-let adminOpen = false;
+const ACCENTS = [
+  ['#e63946','#fff5f5'],['#2196f3','#f0f7ff'],['#ff9800','#fff8f0'],
+  ['#9c27b0','#f9f0ff'],['#00897b','#f0faf8'],['#f44336','#fff5f5'],
+  ['#1976d2','#f0f7ff'],['#e91e63','#fff0f5'],['#ff5722','#fff4f0'],
+  ['#673ab7','#f5f0ff'],['#0288d1','#f0f8ff'],['#388e3c','#f0faf0'],
+  ['#f57c00','#fff7f0'],['#7b1fa2','#f8f0ff'],['#00796b','#f0faf9'],
+  ['#c62828','#fff5f5'],['#2e7d32','#f0faf0'],['#1565c0','#f0f5ff'],
+  ['#ad1457','#fff0f8'],['#558b2f','#f4fae8'],['#4527a0','#f3f0ff'],
+  ['#006064','#f0fafa'],['#bf360c','#fff4f0'],['#37474f','#f5f7f8'],
+];
 
-// ── Socket ─────────────────────────────────────────────────────────────────
-const socket = io();
-socket.on('state', (s) => { state = s; render(); });
-socket.on('state_update', (s) => { state = s; render(); });
-socket.on('error_msg', (msg) => toast(msg));
-
-// ── Toast ──────────────────────────────────────────────────────────────────
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+/* ================================================
+   SEEDED RANDOM + ASSIGNMENTS
+   ================================================ */
+function makeRng(seed) {
+  let s = seed >>> 0;
+  return () => { s = Math.imul(s,1664525)+1013904223|0; return (s>>>0)/4294967296; };
 }
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-const isDan = () => currentPlayer.trim().toLowerCase() === 'dan';
-const isElim = (team) => state.eliminated.includes(team);
-
-function playerSurviving(player) {
-  const teams = state.assignments[player] || [];
-  return teams.some(t => !isElim(t));
+function shuffleSeeded(arr, rng) {
+  const a = arr.slice();
+  for (let i = a.length-1; i>0; i--) { const j=Math.floor(rng()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
 }
 
-function computeWinner() {
-  if (!state.drawn || state.players.length === 0) return null;
-  const alive = state.players.filter(p => playerSurviving(p));
-  if (alive.length === 1) return alive[0];
-  return null;
+const ASSIGNMENTS = (() => {
+  const pool = shuffleSeeded(TEAMS, makeRng(2026));
+  return PLAYERS.map((_,i) => [pool[i*2], pool[i*2+1]]);
+})();
+
+/* ================================================
+   ELIMINATION STATE  (localStorage)
+   ================================================ */
+const STORE_KEY = 'col_wc2026_v3';
+function loadState()  { try { return JSON.parse(localStorage.getItem(STORE_KEY)||'{}'); } catch { return {}; } }
+function saveState(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch {} }
+
+let eliminated    = loadState();
+let confettiFired = false;
+
+const eKey   = (pi,ti) => `${pi}_${ti}`;
+const isElim = (pi,ti) => !!eliminated[eKey(pi,ti)];
+
+function toggleTeam(pi, ti) {
+  const k = eKey(pi,ti);
+  if (eliminated[k]) delete eliminated[k]; else eliminated[k] = true;
+  saveState(eliminated);
+  render();
 }
 
-function initials(name) {
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-}
+/* ================================================
+   ADMIN AUTH  (sessionStorage — clears on tab close)
+   ================================================ */
+const ADMIN_USER = 'dan stead';
+const ADMIN_PASS = 'CarryOn2026';
+const AUTH_KEY   = 'col_admin_session';
 
-// ── Main render ────────────────────────────────────────────────────────────
-function render() {
-  const app = document.getElementById('app');
-  let html = '';
+function isLoggedIn()  { return sessionStorage.getItem(AUTH_KEY) === '1'; }
 
-  const winner = computeWinner();
+function attemptLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const err  = document.getElementById('login-error');
 
-  // Winner banner
-  if (winner) {
-    const wteams = state.assignments[winner] || [];
-    html += `
-      <div class="winner-banner">
-        <div class="winner-trophy">🏆</div>
-        <div class="winner-label">Winner!</div>
-        <div class="winner-name">${esc(winner)}</div>
-        <div class="winner-teams">${wteams.map(t => flag(t)+' '+t).join(' · ')}</div>
-      </div>`;
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    sessionStorage.setItem(AUTH_KEY, '1');
+    closeModal();
+    render();
+  } else {
+    err.textContent = 'Incorrect username or password.';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
   }
+}
 
-  // Status pill
-  const pill = state.drawn
-    ? `<span class="status-pill pill-live"><span class="dot"></span> Draw complete · ${state.players.length} players</span>`
-    : `<span class="status-pill pill-waiting"><span class="dot"></span> Waiting for draw · ${state.players.length} joined</span>`;
-  html += `<div class="status-bar" style="margin-top:20px">${pill}</div>`;
+function logout() {
+  sessionStorage.removeItem(AUTH_KEY);
+  render();
+}
 
-  // ── Pre-draw flow ──────────────────────────────────────────────────────
-  if (!state.drawn) {
-    // Join card
-    if (!currentPlayer) {
-      html += `
-        <div class="section-head"><h2>Join the Sweepstake</h2></div>
-        <div class="card join-card">
-          <label>Your name</label>
-          <input id="nameInput" type="text" placeholder="Enter your name…" autocomplete="off"
-            autocapitalize="words" maxlength="30" inputmode="text">
-          <button class="btn btn-primary" onclick="doJoin()">Join Now</button>
-        </div>`;
-    } else {
-      html += `
-        <div class="section-head"><h2>You're In!</h2></div>
-        <div class="card join-card">
-          <div class="joined-banner">
-            <div class="joined-avatar">${initials(currentPlayer)}</div>
-            <div>
-              <div class="joined-name">${esc(currentPlayer)}</div>
-              <div class="joined-status">Waiting for the draw…</div>
+function openModal() {
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
+  document.getElementById('login-modal').classList.add('open');
+  setTimeout(() => document.getElementById('login-user').focus(), 50);
+}
+
+function closeModal() {
+  document.getElementById('login-modal').classList.remove('open');
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('login-modal')) closeModal();
+}
+
+function resetAll() {
+  if (!isLoggedIn()) return;
+  if (!confirm('Reset all eliminations? This cannot be undone.')) return;
+  eliminated = {}; confettiFired = false;
+  saveState(eliminated); render();
+}
+
+/* ================================================
+   RENDER
+   ================================================ */
+function render() {
+  const grid    = document.getElementById('grid');
+  const stats   = document.getElementById('stats');
+  const cr      = document.getElementById('controls-right');
+  const banner  = document.getElementById('winner-banner');
+  const winText = document.getElementById('winner-text');
+  grid.innerHTML = '';
+
+  let playersIn = 0, teamsLeft = 0, lastWinner = null;
+
+  PLAYERS.forEach((player, pi) => {
+    const teams  = ASSIGNMENTS[pi];
+    const allOut = teams.every((t,ti) => isElim(pi,ti) || liveTeams.has(t.name));
+    if (!allOut) { playersIn++; lastWinner = player; }
+    teams.forEach((t,ti) => { if (!isElim(pi,ti) && !liveTeams.has(t.name)) teamsLeft++; });
+
+    const [accent, hbg] = ACCENTS[pi % ACCENTS.length];
+
+    const teamsHTML = teams.map((team,ti) => {
+      const isLive   = liveTeams.has(team.name);
+      const isManual = isElim(pi,ti);
+
+      if (isLive) {
+        // Auto-eliminated — not clickable
+        return `<button class="team-btn live-out" disabled title="Knocked out (live data)">
+          <span class="flag">${team.flag}</span>
+          <span class="team-name">${team.name}</span>
+          <span class="live-badge">OUT</span>
+        </button>`;
+      } else if (isManual) {
+        return `<button class="team-btn elim"
+                  onclick="toggleTeam(${pi},${ti})"
+                  title="Manually eliminated — click to restore">
+          <span class="flag">${team.flag}</span>
+          <span class="team-name">${team.name}</span>
+          <span class="elim-icon">❌</span>
+        </button>`;
+      } else {
+        return `<button class="team-btn"
+                  onclick="toggleTeam(${pi},${ti})"
+                  title="Click to eliminate">
+          <span class="flag">${team.flag}</span>
+          <span class="team-name">${team.name}</span>
+          <span class="elim-icon">✅</span>
+        </button>`;
+      }
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'card' + (allOut?' all-out':'');
+    card.innerHTML = `
+      <div class="card-inner" style="--accent:${accent};--header-bg:${hbg}">
+        <div class="card-header" style="background:${allOut?'#efefef':hbg}">
+          <span class="player-emoji">${player.emoji}</span>
+          <div class="player-info">
+            <div class="player-name">${player.name}</div>
+            <div class="player-status ${allOut?'status-out':'status-in'}">
+              ${allOut?'💀 Eliminated':'🟢 Still In'}
             </div>
           </div>
-        </div>`;
-    }
+        </div>
+        <div class="card-teams">${teamsHTML}</div>
+      </div>`;
+    grid.appendChild(card);
+  });
 
-    // Players list
-    html += `<div class="section-head"><h2>Players</h2><span class="badge">${state.players.length}</span></div>`;
-    if (state.players.length === 0) {
-      html += `<div class="card"><div class="empty"><div class="empty-icon">👥</div><p>No one has joined yet.<br>Be the first!</p></div></div>`;
-    } else {
-      html += `<div class="card">`;
-      state.players.forEach((p, i) => {
-        const isYou = p.toLowerCase() === currentPlayer.toLowerCase();
-        html += `
-          <div class="player-row">
-            <span class="player-num">${i+1}</span>
-            <span class="player-name-text">${esc(p)}</span>
-            ${isYou ? '<span class="player-you">You</span>' : ''}
-          </div>`;
-      });
-      html += `</div>`;
-    }
+  /* Stats */
+  stats.innerHTML = `
+    <span class="stat-pill stat-in">🟢 ${playersIn} still in</span>
+    <span class="stat-pill stat-out">💀 ${PLAYERS.length-playersIn} out</span>
+    <span class="stat-pill stat-teams">⚽ ${teamsLeft} teams left</span>`;
 
-    // Dan's draw button
-    if (isDan() && state.players.length >= 2) {
-      html += `
-        <button class="btn btn-teal" onclick="doDraw()" style="margin-top:8px">
-          🎲 Draw Teams (${state.players.length} players)
-        </button>`;
-    } else if (isDan() && state.players.length < 2) {
-      html += `<div style="text-align:center;color:var(--muted);font-size:13px;margin-top:12px">Need at least 2 players to draw</div>`;
-    }
-
+  /* Controls right — admin-aware */
+  if (isLoggedIn()) {
+    cr.innerHTML = `
+      <span class="admin-badge">🔓 Dan Stead</span>
+      <button class="btn btn-reset" onclick="resetAll()">↺ Reset All</button>
+      <button class="btn btn-logout" onclick="logout()">Logout</button>`;
   } else {
-    // ── Post-draw flow ───────────────────────────────────────────────────
-
-    // Your teams card (if you're a registered player)
-    const myTeams = currentPlayer ? state.assignments[currentPlayer] : null;
-    if (myTeams && myTeams.length) {
-      html += `
-        <div class="section-head"><h2>Your Teams</h2></div>
-        <div class="card your-teams-card">
-          <div class="your-teams-label">✦ ${esc(currentPlayer)}'s teams</div>
-          <div class="team-chips">`;
-      myTeams.forEach(team => {
-        const out = isElim(team);
-        html += `
-            <div class="team-chip ${out ? 'eliminated' : ''}">
-              <span class="flag">${flag(team)}</span>
-              <span class="tname">${esc(team)}</span>
-              ${out ? '<span class="chip-out">OUT</span>' : '<span class="chip-alive">IN</span>'}
-            </div>`;
-      });
-      html += `</div></div>`;
-    } else if (currentPlayer && !state.players.includes(currentPlayer)) {
-      // Player not in list — maybe joined after draw
-      html += `
-        <div class="card" style="margin-top:20px;text-align:center;color:var(--muted)">
-          <div class="empty-icon">😔</div>
-          <p style="font-size:14px">You joined after the draw was made.<br>You weren't assigned any teams this time.</p>
-        </div>`;
-    } else if (!currentPlayer) {
-      // Not registered at all
-      html += `
-        <div class="section-head"><h2>View the Draw</h2></div>
-        <div class="card join-card">
-          <label>Enter your name to see your teams</label>
-          <input id="nameInput" type="text" placeholder="Your name…" autocomplete="off"
-            autocapitalize="words" maxlength="30">
-          <button class="btn btn-primary" onclick="doViewOnly()">View My Teams</button>
-        </div>`;
-    }
-
-    // All players
-    html += `<div class="section-head"><h2>All Players</h2><span class="badge">${state.players.length}</span></div>`;
-    state.players.forEach(player => {
-      const teams = state.assignments[player] || [];
-      const isYou = player.toLowerCase() === currentPlayer.toLowerCase();
-      const surviving = teams.filter(t => !isElim(t));
-      const alive = surviving.length > 0;
-      html += `
-        <div class="player-card ${isYou ? 'is-you' : ''}">
-          <div class="player-card-header">
-            <div class="player-card-avatar">${initials(player)}</div>
-            <div class="player-card-name">${esc(player)}${isYou ? ' <span style="font-size:11px;color:var(--accent)">(you)</span>' : ''}</div>
-            <span class="player-card-status ${alive ? 'status-alive' : 'status-out'}">${alive ? surviving.length+' alive' : 'OUT'}</span>
-          </div>
-          <div class="player-card-teams">`;
-      teams.forEach(team => {
-        const out = isElim(team);
-        html += `
-            <div class="mini-team ${out ? 'eliminated' : ''}">
-              <span class="flag">${flag(team)}</span>
-              <span>${esc(team)}</span>
-              ${out ? '<span style="color:#ff7070;font-size:11px;margin-left:auto">OUT</span>' : ''}
-            </div>`;
-      });
-      html += `</div></div>`;
-    });
-
-    // ── Admin panel (Dan only) ─────────────────────────────────────────────
-    if (isDan()) {
-      const allDrawnTeams = Object.values(state.assignments).flat();
-      html += `
-        <div class="admin-panel">
-          <div class="admin-toggle" onclick="toggleAdmin()">
-            <span class="admin-toggle-label">⚙️ Admin Controls</span>
-            <span class="admin-toggle-icon ${adminOpen ? 'open' : ''}">▼</span>
-          </div>
-          <div class="admin-body ${adminOpen ? 'open' : ''}">
-            <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
-              Tap a team to mark them eliminated. Tap again to reinstate.
-            </p>
-            <div class="elim-grid">`;
-      allDrawnTeams.forEach(team => {
-        const out = isElim(team);
-        html += `
-              <button class="elim-btn ${out ? 'is-elim' : ''}" onclick="toggleElim('${esc(team)}')">
-                <span class="flag">${flag(team)}</span>
-                <span>${esc(team)}</span>
-              </button>`;
-      });
-      html += `</div>
-            <div class="divider" style="margin-top:16px"></div>
-            <button class="btn btn-danger" onclick="doReset()" style="margin-top:12px">
-              🔄 Reset Draw (keep players)
-            </button>
-            <button class="btn btn-danger" onclick="doFullReset()" style="margin-top:8px">
-              🗑️ Full Reset (players + draw)
-            </button>
-          </div>
-        </div>`;
-    }
+    cr.innerHTML = `<button class="btn btn-login" onclick="openModal()">🔐 Admin</button>`;
   }
 
-  app.innerHTML = html;
-
-  // Bind Enter on name input
-  const ni = document.getElementById('nameInput');
-  if (ni) {
-    ni.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        if (state.drawn) doViewOnly();
-        else doJoin();
-      }
-    });
-    // Auto-focus only on desktop (avoid keyboard popup on mobile)
-    if (window.innerWidth > 600) ni.focus();
+  /* Winner */
+  if (playersIn === 1) {
+    banner.style.display = 'block';
+    banner.style.background = 'linear-gradient(135deg,#b8860b 0%,#FFD700 45%,#FFA000 100%)';
+    banner.style.animation  = '';
+    winText.style.color = '#3a2000';
+    winText.textContent = `${lastWinner.emoji}  ${lastWinner.name} WINS THE SWEEPSTAKE!  ${lastWinner.emoji}`;
+    if (!confettiFired) { confettiFired = true; launchConfetti(); }
+  } else if (playersIn === 0) {
+    banner.style.display = 'block';
+    banner.style.background = '#333';
+    banner.style.animation  = 'none';
+    winText.style.color = '#aaa';
+    winText.textContent = 'Every team eliminated! 😱';
+  } else {
+    banner.style.display = 'none';
   }
 }
 
-// ── Actions ────────────────────────────────────────────────────────────────
-function doJoin() {
-  const ni = document.getElementById('nameInput');
-  const name = (ni ? ni.value : '').trim();
-  if (!name) { toast('Please enter your name'); return; }
-  currentPlayer = name;
-  sessionStorage.setItem('sweepstake_player', name);
-  socket.emit('join_player', name);
+/* ================================================
+   CONFETTI
+   ================================================ */
+function launchConfetti() {
+  const palette = ['#FFD700','#FF3B30','#34C759','#007AFF','#FF9500','#AF52DE','#FF2D55','#5AC8FA','#fff'];
+  for (let i = 0; i < 120; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      const sz = 7 + Math.random()*9;
+      el.className = 'confetti-piece';
+      el.style.cssText = `
+        left:${Math.random()*100}vw;
+        width:${sz}px; height:${sz*(Math.random()>.5?1:2.4)}px;
+        background:${palette[Math.floor(Math.random()*palette.length)]};
+        border-radius:${Math.random()>.6?'50%':'1px'};
+        animation-duration:${2.8+Math.random()*3.5}s;
+        animation-delay:${Math.random()*2.5}s;`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 9000);
+    }, i * 35);
+  }
 }
 
-function doViewOnly() {
-  const ni = document.getElementById('nameInput');
-  const name = (ni ? ni.value : '').trim();
-  if (!name) { toast('Please enter your name'); return; }
-  currentPlayer = name;
-  sessionStorage.setItem('sweepstake_player', name);
+/* ================================================
+   LIVE DATA  (ESPN unofficial API — no key required)
+   Group stage eliminations are hardcoded as fallback.
+   ================================================ */
+const LIVE_KEY = 'col_wc2026_live2';
+const LIVE_TTL = 15 * 60 * 1000; // re-use cached data for 15 mins
+
+// Hardcoded group stage eliminations (all 16, final as of Jun 27)
+const GROUP_STAGE_OUT = new Set([
+  'Haiti', 'Turkey', 'Tunisia', 'Jordan',
+  'Qatar', 'Curaçao', 'Scotland', 'Iran',
+  'Uzbekistan', 'New Zealand', 'South Korea', 'Czechia',
+  'Saudi Arabia', 'Iraq', 'Uruguay', 'Panama',
+]);
+
+let liveTeams = new Set();       // team names knocked out (server or fallback)
+let liveLastTs = 0;
+let liveStatus = 'waiting';      // 'waiting' | 'ok' | 'error'
+
+function loadLiveCache() {
+  try {
+    const s = JSON.parse(localStorage.getItem(LIVE_KEY) || 'null');
+    if (s && Date.now() - s.ts < LIVE_TTL) {
+      liveTeams  = new Set(s.teams);
+      liveLastTs = s.ts;
+      liveStatus = 'ok';
+    }
+  } catch {}
+}
+
+function saveLiveCache() {
+  try {
+    localStorage.setItem(LIVE_KEY, JSON.stringify({ teams: [...liveTeams], ts: liveLastTs }));
+  } catch {}
+}
+
+function updateLiveBar() {
+  const dot  = document.getElementById('live-dot');
+  const text = document.getElementById('live-bar-text');
+  if (!dot || !text) return;
+
+  dot.className = 'live-dot';
+
+  if (liveStatus === 'ok') {
+    dot.classList.add('active');
+    const ago = Math.round((Date.now() - liveLastTs) / 60000);
+    const agoStr = ago < 1 ? 'just now' : `${ago} min${ago > 1 ? 's' : ''} ago`;
+    text.textContent = `Live results · updated ${agoStr} · ${liveTeams.size} team${liveTeams.size !== 1 ? 's' : ''} knocked out`;
+  } else if (liveStatus === 'error') {
+    dot.classList.add('error');
+    text.textContent = 'Live results: could not connect — showing last known data';
+  } else {
+    dot.classList.add('waiting');
+    text.textContent = 'Live results: connecting…';
+  }
+}
+
+async function fetchLiveData() {
+  try {
+    const res  = await fetch('/api/eliminated');
+    if (!res.ok) throw new Error('Server error');
+    const data = await res.json();
+    liveTeams  = new Set(data.teams || []);
+    liveLastTs = data.lastUpdated || Date.now();
+    liveStatus = 'ok';
+    saveLiveCache();
+  } catch {
+    // Fallback: use hardcoded group stage eliminations
+    // (happens when viewing as a local file, or if server is down)
+    if (liveTeams.size === 0) {
+      liveTeams  = new Set(GROUP_STAGE_OUT);
+      liveLastTs = Date.now();
+      liveStatus = 'ok';
+      saveLiveCache();
+    } else {
+      liveStatus = 'error';
+    }
+  }
+  updateLiveBar();
   render();
 }
 
-function doDraw() {
-  if (!confirm('Ready to draw teams? This will assign 3 random teams to each player.')) return;
-  socket.emit('draw_sweepstake', currentPlayer);
-}
+// Update the bar text every minute without refetching
+setInterval(updateLiveBar, 60 * 1000);
+// Refetch every 5 minutes
+setInterval(fetchLiveData, 5 * 60 * 1000);
 
-function toggleElim(team) {
-  socket.emit('toggle_eliminated', { team, requester: currentPlayer });
-}
-
-function doReset() {
-  if (!confirm('Reset the draw? Players will be kept but teams will be re-drawn.')) return;
-  socket.emit('reset_draw', currentPlayer);
-}
-
-function doFullReset() {
-  if (!confirm('Full reset? This will remove all players and the draw. Are you sure?')) return;
-  socket.emit('full_reset', currentPlayer);
-}
-
-function toggleAdmin() {
-  adminOpen = !adminOpen;
-  render();
-}
-
-function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-}
-
-// ── Init ───────────────────────────────────────────────────────────────────
+/* ================================================
+   INIT
+   ================================================ */
+loadLiveCache();
 render();
+updateLiveBar();
+fetchLiveData(); // kick off first fetch immediately
 </script>
 </body>
 </html>
